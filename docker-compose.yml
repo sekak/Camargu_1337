@@ -1,0 +1,44 @@
+version: '3.8'
+
+networks:
+    net:
+      name: net
+
+volumes:
+  mariadb_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./backend/mariadb_data
+    
+
+services:
+  web:
+    build:
+      context: .             # use project root, not ./nginx
+      dockerfile: nginx/Dockerfile
+    ports:
+      - "8000:80"
+    depends_on:
+      - mariadb
+    networks:
+      - net
+    env_file:
+      - .env_file
+    
+
+  mariadb:
+    build: 
+      context: .
+      dockerfile: mariadb/Dockerfile
+    ports:
+      - "3306:3306"
+    networks:
+      - net 
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    #   - ./backend/mariadb_data:/var/lib/mysql
+  
+
+    
