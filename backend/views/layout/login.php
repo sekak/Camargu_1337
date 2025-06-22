@@ -1,24 +1,22 @@
+
 <?php
 require_once '../../utils/authMiddleware.php';
 require_once '../../controllers/AuthController.php';
 
 redirectIfAuthenticated();
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    echo "Processing login...";
     $controller = new AuthController();
-    $controller->register();
-    $_SESSION['register_success'] = "✅ Please check your email to confirm your account.";
+    $controller->login();
 }
-
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Camargu - Register</title>
+    <title>Camargu - Login</title>
     <style>
         /* Reset default styles */
         * {
@@ -37,8 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            background: linear-gradient(135deg, #87CEEB 0%, #FFC1CC 100%);
-            /* Sky blue to flamingo pink */
+            background: linear-gradient(135deg, #87CEEB 0%, #FFC1CC 100%); /* Sky blue to flamingo pink */
             overflow: hidden;
         }
 
@@ -56,23 +53,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         /* Slide-in animation */
         @keyframes slideIn {
-            from {
-                transform: translateY(-50px);
-                opacity: 0;
-            }
-
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
         }
 
         /* Form heading with Camargu branding */
         .form-container h2 {
             text-align: center;
             margin-bottom: 1.8rem;
-            color: #2E8B57;
-            /* Sea green inspired by wetlands */
+            color: #2E8B57; /* Sea green inspired by wetlands */
             font-size: 1.8rem;
             font-weight: 600;
             text-transform: uppercase;
@@ -80,32 +69,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         /* Input fields with smooth transitions */
-        input[type="text"],
         input[type="email"],
         input[type="password"] {
             width: 100%;
             padding: 1rem;
             margin-bottom: 1.2rem;
-            border: 2px solid #B0E0E6;
-            /* Powder blue border */
+            border: 2px solid #B0E0E6; /* Powder blue border */
             border-radius: 8px;
             font-size: 1rem;
             background: rgba(255, 255, 255, 0.9);
             transition: border-color 0.3s, box-shadow 0.3s;
         }
 
-        input[type="text"]:focus,
         input[type="email"]:focus,
         input[type="password"]:focus {
             outline: none;
-            border-color: #FF69B4;
-            /* Hot pink for focus, flamingo-inspired */
+            border-color: #FF69B4; /* Hot pink for focus, flamingo-inspired */
             box-shadow: 0 0 8px rgba(255, 105, 180, 0.4);
         }
 
         input::placeholder {
-            color: #778899;
-            /* Light slate gray */
+            color: #778899; /* Light slate gray */
             font-style: italic;
         }
 
@@ -113,8 +97,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         button[type="submit"] {
             width: 100%;
             padding: 1rem;
-            background: #2E8B57;
-            /* Sea green */
+            background: #2E8B57; /* Sea green */
             color: white;
             border: none;
             border-radius: 8px;
@@ -125,8 +108,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         button[type="submit"]:hover {
-            background: #228B22;
-            /* Forest green */
+            background: #228B22; /* Forest green */
             transform: translateY(-2px);
         }
 
@@ -135,24 +117,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         /* Login link styling */
-        .login-link {
+        .register-link {
             text-align: center;
             margin-top: 1rem;
         }
 
-        .login-link a {
-            color: #FF69B4;
-            /* Flamingo pink */
+        .register-link a {
+            color: #FF69B4; /* Flamingo pink */
             text-decoration: none;
             font-size: 0.95rem;
             font-weight: 600;
             transition: color 0.3s;
         }
 
-        .login-link a:hover {
-            color: #C71585;
-            /* Darker pink */
+        .register-link a:hover {
+            color: #C71585; /* Darker pink */
             text-decoration: underline;
+        }
+
+        /* Error message styling */
+        .error {
+            color: #FF69B4;
+            font-size: 0.9rem;
+            text-align: center;
+            margin-bottom: 1rem;
         }
 
         /* Subtle Camargue-inspired decoration */
@@ -179,7 +167,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 font-size: 1.5rem;
             }
 
-            input[type="text"],
             input[type="email"],
             input[type="password"],
             button[type="submit"] {
@@ -187,39 +174,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 font-size: 0.95rem;
             }
 
-            .login-link a {
+            .register-link a {
                 font-size: 0.9rem;
             }
         }
     </style>
 </head>
-
 <body>
     <div class="form-container">
-        <h2>Camargu Register</h2>
-
-        <?php if (isset($_SESSION['register_success'])): ?>
-            <div
-                style="background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; padding: 15px; margin-bottom: 20px; border-radius: 5px; text-align: center;">
-                <?= $_SESSION['register_success']; ?>
-                <br><br>
-                <a href="login.php" style="color: #155724; font-weight: bold;">Go to login</a>
-            </div>
-            <?php unset($_SESSION['register_success']); ?>
-
-        <?php else: ?>
-            <form action="" method="POST">
-                <input type="text" name="username" placeholder="Username" required />
-                <input type="email" name="email" placeholder="Email" required />
-                <input type="password" name="password" placeholder="Password" required />
-                <button type="submit">Register</button>
-            </form>
-            <div class="login-link">
-                <a href="login.php">Already have an account? Log in here</a>
-            </div>
-        <?php endif; ?>
-
+        <h2>Camargu Login</h2>
+        <form action="" method="POST">
+            <input type="email" name="email" placeholder="Email" required />
+            <input type="password" name="password" placeholder="Password" required />
+            <button type="submit">Log In</button>
+        </form>
+        <div class="register-link">
+            <a href="register.php">Need an account? Register here</a>
+        </div>
     </div>
 </body>
-
 </html>
+
+
