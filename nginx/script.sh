@@ -11,7 +11,13 @@ grep -q "env\[DB_CHARSET\]" "$FPM_CONF" || echo "env[DB_CHARSET] = ${DB_CHARSET}
 
 # Start PHP-FPM AFTER setting envs
 service php8.2-fpm start
+
 chmod 666 /run/php/php8.2-fpm.sock
+
+composer install 
+
 
 # Start Nginx in foreground
 nginx -g 'daemon off;'
+
+

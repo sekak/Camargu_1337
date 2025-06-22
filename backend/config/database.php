@@ -9,10 +9,11 @@ class Database
 
     public function __construct()
     {
+
         $this->host = getenv('DB_HOST');
         $this->db = getenv('DB_NAME');
         $this->user = getenv('DB_USER');
-        $this->pass =   getenv('DB_PASS');
+        $this->pass = getenv('DB_PASS');
         $this->charset = "utf8mb4";
     }
 
@@ -25,7 +26,7 @@ class Database
         $charset = $this->charset;
 
         $dsn = "mysql:host=$host;dbname=$db;charset=$charset";
-        echo "Connecting to MariaDB at $dsn...\n";
+        // echo "Connecting to MariaDB at $dsn...\n";
 
         $options = [
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
@@ -34,13 +35,11 @@ class Database
         ];
 
         try {
-            $pdo = new PDO($dsn, $user, $pass, options: $options);
-            echo "Connected to MariaDB successfully!";
+            $pdo = new PDO($dsn, $user, $pass, $options);
             return $pdo;
         } catch (PDOException $e) {
             echo "Connection failed: " . $e->getMessage();
-            // return a dummy PDO or stop the script
-            exit; // safest way to stop here
+            exit;  // 🔴 Stop execution if database fails
         }
     }
 }
