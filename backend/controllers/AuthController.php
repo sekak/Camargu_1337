@@ -21,13 +21,28 @@ class AuthController
         $email = $_POST['email'] ?? '';
         $password = $_POST['password'] ?? '';
 
+        if (empty($username) || empty($email) || empty($password)) {
+            $_SESSION['errors'] = "All fields are required.";
+            return;
+        } else if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $_SESSION['errors'] = "Invalid email format.";
+            return;
+        }
+
+        $userExists = $userModel->findByEmail($email);
+        if ($userExists) {
+            $_SESSION['errors'] = "Email already exists.";
+            return;
+        }
         $hashed = password_hash($password, PASSWORD_BCRYPT);
         $token = bin2hex(random_bytes(32));
 
         $userModel->create($username, $email, $hashed, $token);
+        $_SESSION['register_success'] = "✅ Please check your email to confirm your account.";
 
         $mail = new Mail();
         $mail->sendVerificationEmail($email, $token, $username);
+
     }
 
     public function login()
@@ -41,13 +56,14 @@ class AuthController
 
         $email = $_POST['email'] ?? '';
         $password = $_POST['password'] ?? '';
-        
+
         $user = $userModel->findByEmail($email);
-        
+        echo "user=>" . $user;
         if ($user === null) {
-            echo "Invalid email or password.";
+            $_SESSION['errors'] = "User not found.";
             return;
         } else {
+            echo "user=>" . $user;
             if (password_verify($password, $user['password'])) {
                 if ($user['is_verified']) {
                     $_SESSION['user_profile'] = [
@@ -55,13 +71,12 @@ class AuthController
                         'username' => $user['username'],
                         'email' => $user['email'],
                     ];
-                    header(header: "Location: /index.php");
-                    exit;
+                    header("Location: /index.php");
                 } else {
-                    echo "Please verify your email first.";
+                    $_SESSION["errors"] = "please verify your email first.";
                 }
             } else {
-                echo "Invalid email or password.";
+                $_SESSION["errors"] = "Invalid email or password.";
             }
         }
     }

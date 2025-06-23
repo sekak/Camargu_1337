@@ -7,7 +7,6 @@ redirectIfAuthenticated();
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $controller = new AuthController();
     $controller->register();
-    $_SESSION['register_success'] = "✅ Please check your email to confirm your account.";
 }
 
 ?>
@@ -191,7 +190,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 font-size: 0.9rem;
             }
         }
+
+        .error {
+            color: #FF69B4;
+            font-size: 0.9rem;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
     </style>
+
 </head>
 
 <body>
@@ -212,6 +219,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <input type="text" name="username" placeholder="Username" required />
                 <input type="email" name="email" placeholder="Email" required />
                 <input type="password" name="password" placeholder="Password" required />
+                <?php if (isset($_SESSION['errors'])): ?>
+                    <div class="error">
+                        <?= $_SESSION['errors']; ?>
+                        <?php unset($_SESSION['errors']); ?>
+                    </div>
+                <?php endif; ?>
                 <button type="submit">Register</button>
             </form>
             <div class="login-link">

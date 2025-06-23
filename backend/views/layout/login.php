@@ -5,7 +5,6 @@ require_once '../../controllers/AuthController.php';
 
 redirectIfAuthenticated();
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    echo "Processing login...";
     $controller = new AuthController();
     $controller->login();
 }
@@ -186,6 +185,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <form action="" method="POST">
             <input type="email" name="email" placeholder="Email" required />
             <input type="password" name="password" placeholder="Password" required />
+            <?php if (isset($_SESSION['errors'])): ?>
+                <div class="error">
+                    <?= $_SESSION['errors']; ?>
+                    <?php unset($_SESSION['errors']); ?>
+                </div>
+            <?php endif; ?>
             <button type="submit">Log In</button>
         </form>
         <div class="register-link">
