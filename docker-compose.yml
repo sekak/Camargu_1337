@@ -51,6 +51,16 @@ services:
       - mariadb_data:/var/lib/mysql
     env_file:
       - .env_file
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+    networks:
+      - net
+    depends_on:
+      - mariadb
   
 
     

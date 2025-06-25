@@ -1,11 +1,11 @@
 
 <?php
 require_once '../../utils/authMiddleware.php';
-require_once '../../controllers/AuthController.php';
+require_once '../../controllers/Auth.controller.php';
 
 redirectIfAuthenticated();
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $controller = new AuthController();
+    $controller = new Auth_controller();
     $controller->login();
 }
 ?>
@@ -16,6 +16,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Camargu - Login</title>
+    <link rel="stylesheet" href="/public/login.css">
+    
     <style>
         /* Reset default styles */
         * {
@@ -60,7 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         .form-container h2 {
             text-align: center;
             margin-bottom: 1.8rem;
-            color: #2E8B57; /* Sea green inspired by wetlands */
+            color: #007bff; /* Sea green inspired by wetlands */
             font-size: 1.8rem;
             font-weight: 600;
             text-transform: uppercase;
@@ -96,7 +98,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         button[type="submit"] {
             width: 100%;
             padding: 1rem;
-            background: #2E8B57; /* Sea green */
+            background: #007bff; /* Sea green */
             color: white;
             border: none;
             border-radius: 8px;
