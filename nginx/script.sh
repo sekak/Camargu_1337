@@ -16,6 +16,8 @@ chmod 666 /run/php/php8.2-fpm.sock
 
 composer install 
 
+chmod -R 775 /var/www/html/public/users_pictures
+chown -R www-data:www-data /var/www/html/public/users_pictures
 
 # Start Nginx in foreground
 nginx -g 'daemon off;'

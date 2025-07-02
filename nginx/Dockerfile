@@ -2,6 +2,7 @@ FROM debian:bookworm
 
 # Install PHP, extensions, and tools
 RUN apt-get update && apt-get install -y \
+    php-gd \
     php \
     php-cli \
     php-mbstring \

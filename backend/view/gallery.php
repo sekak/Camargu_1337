@@ -99,7 +99,6 @@
             left: 0;
             z-index: 1;
             pointer-events: none;
-            opacity: 0.3;
             display: 'none';
         }
 
@@ -230,8 +229,24 @@
                     </div>
                     <div class="superpose-img" id="superpose-img">
                         <div class="superpose-img-item" id="superpose-img-item">
-                            <img src="/public/img1.jpeg" alt="Superposed Image 1" id="ticket" />
-                            <img src="/public/img2.jpeg" alt="Superposed Image 1" id="ticket" />
+                            <img src="/public/img1.png" alt="Superposed Image 1" id="ticket" />
+                            <img src="/public/img2.png" alt="Superposed Image 1" id="ticket" />
+                            <img src="/public/img3.png" alt="Superposed Image 1" id="ticket" />
+                            <img src="/public/img4.png" alt="Superposed Image 1" id="ticket" />
+                            <img src="/public/img5.png" alt="Superposed Image 1" id="ticket" />
+                            <img src="/public/img6.png" alt="Superposed Image 1" id="ticket" />
+                            <img src="/public/img7.png" alt="Superposed Image 1" id="ticket" />
+                            <img src="/public/img8.png" alt="Superposed Image 1" id="ticket" />
+                            <img src="/public/img9.png" alt="Superposed Image 1" id="ticket" />
+                            <img src="/public/img10.png" alt="Superposed Image 1" id="ticket" />
+                            <img src="/public/img11.png" alt="Superposed Image 1" id="ticket" />
+                            <img src="/public/img12.png" alt="Superposed Image 1" id="ticket" />
+                            <img src="/public/img13.png" alt="Superposed Image 1" id="ticket" />
+                            <img src="/public/img14.png" alt="Superposed Image 1" id="ticket" />
+                            <img src="/public/img15.png" alt="Superposed Image 1" id="ticket" />
+                            <img src="/public/img16.png" alt="Superposed Image 1" id="ticket" />
+                            <img src="/public/img18.png" alt="Superposed Image 1" id="ticket" />
+                            <img src="/public/img19.png" alt="Superposed Image 1" id="ticket" />
                         </div>
                     </div>
                 </div>
@@ -256,6 +271,7 @@
             let isSuperposed = [];
             let saveBtn = null;
             let cancelBtn = null;
+            let isUploaded = false;
 
             const uploadBtn = document.getElementById('avatar');
             const previewImage = document.getElementById('previewImage');
@@ -293,6 +309,29 @@
                 }
             }
 
+            function generateFinalImage(baseElement) {
+                console.log("--->",baseElement);
+                const canvas = document.createElement('canvas');
+                canvas.width = baseElement.width || baseElement.videoWidth;
+                canvas.height = baseElement.height || baseElement.videoHeight;
+
+                const ctx = canvas.getContext('2d');
+
+                // Dessiner base (image ou vidéo)
+                ctx.drawImage(baseElement, 0, 0, canvas.width, canvas.height);
+
+                // Superpose images
+                isSuperposed.forEach(id => {
+                    const imgEl = document.getElementById(id);
+                    if (imgEl) {
+                        ctx.drawImage(imgEl, 0, 0, canvas.width, canvas.height);
+                    }
+                });
+
+                return canvas.toDataURL('image/jpeg');
+            }
+
+
             superposeImages.forEach(superpose => {
                 superpose.addEventListener('click', () => {
                     const idName = `${superpose.src.split('/').pop().split('.')[0]}`;
@@ -318,7 +357,7 @@
 
             uploadBtn.addEventListener('change', (e) => {
                 if (e.target.files.length === 0 || !previewImage) return;
-
+                isUploaded = true;  
                 if (!cancelBtn) {
                     cancelBtn = document.createElement('button');
                     cancelBtn.textContent = 'Cancel Upload';
@@ -344,19 +383,21 @@
 
                 const imgURL = URL.createObjectURL(e.target.files[0]);
                 previewImage.src = imgURL;
-                previewImage.style.display = 'block';
                 video.style.display = 'none';
                 startCameraBtn.style.display = 'none';
                 avatarLabel.style.display = 'none';
+                previewImage.style.display = 'block';
 
                 superposeImageItem.style.pointerEvents = 'fill';
                 superposeImg.style.cursor = 'pointer';
                 stopCamera();
 
                 removeSaveBtn();
+
             });
 
             startCameraBtn.addEventListener('click', () => {
+                isUploaded = false;
                 avatarLabel.style.display = 'none';
                 startCameraBtn.style.display = 'none';
                 previewImage.style.display = 'none';
@@ -396,12 +437,13 @@
             });
 
             captureBtn.addEventListener('click', () => {
-                const canvas = document.createElement('canvas');
-                canvas.width = video.videoWidth;
-                canvas.height = video.videoHeight;
-                const ctx = canvas.getContext('2d');
-                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-                
+
+                // if isUploaded, then generate image with width and height else send video
+                if (isUploaded) {
+                    previewImage.src = generateFinalImage(previewImage);
+                }
+                else
+                    previewImage.src = generateFinalImage(video);
                 previewImage.style.display = 'block';
                 video.style.display = 'none';
                 stopCamera();
@@ -413,7 +455,26 @@
                     uploadBtn.insertAdjacentElement('afterend', saveBtn);
                 }
                 saveBtn.style.display = 'inline-block';
+                saveBtn.onclick = () => {
+                    const imgID = Math.floor(Math.random() * 1000000);
+
+                    fetch('/controllers/test.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        },
+                        body: `imgData=${encodeURIComponent(previewImage.src)}&imgID=${imgID}`
+                    })
+                        .then(response => response.text())
+                        .then(text => {
+                            console.log('Raw response:', text);
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                        });
+                };
             });
+
         });
 
 
@@ -422,3 +483,25 @@
 </body>
 
 </html>
+
+
+<!-- const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                const img = new Image();
+                img.src = imgURL;
+                img.onload = () => {
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    ctx.drawImage(img, 0, 0, img.width, img.height);
+                    if (isSuperposed.length > 0) {
+                        isSuperposed.forEach(id => {
+                            const superposeImg = document.getElementById(id);
+                            if (superposeImg) {
+                                ctx.globalAlpha = 0.3; // Set transparency for superposed images
+                                ctx.drawImage(superposeImg, 0, 0, img.width, img.height);
+                            }
+                        });
+                    }
+
+                    previewImage.src = canvas.toDataURL('image/png');
+                };   -->
