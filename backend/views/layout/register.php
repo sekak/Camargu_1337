@@ -69,7 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         .form-container h2 {
             text-align: center;
             margin-bottom: 1.8rem;
-            color: #007bff;
+            color: rgba(141, 141, 141, 0.86);
             /* Sea green inspired by wetlands */
             font-size: 1.8rem;
             font-weight: 600;
@@ -111,7 +111,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         button[type="submit"] {
             width: 100%;
             padding: 1rem;
-            background: #007bff;
+            background: rgba(141, 141, 141, 0.86);
             /* Sea green */
             color: white;
             border: none;

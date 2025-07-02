@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/../config/session.php';
 
 class Comment_model {
     private $db;

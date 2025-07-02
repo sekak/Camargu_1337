@@ -1,12 +1,15 @@
-<?php
-session_start(); // Ensure session is started
-if (isset($_SESSION["user_profile"]["username"])) : ?>
-    <aside class="sidebar">
-        
-        <div class="user-info">
-            <h3>User Profile</h3>
-            <p><strong>Username:</strong> <?php echo htmlspecialchars($_SESSION["user_profile"]["username"]); ?></p>
-            <p><strong>Email:</strong> <?php echo htmlspecialchars($_SESSION["user_profile"]["email"]); ?></p>
-        </div>
-    </aside>
-<?php endif; ?>
+<style>
+
+.sidebar {
+  flex: 1;
+}
+</style>
+
+<div class="sidebar">
+    <div class="sidebar-header">
+        <a href="#home" class="active"><i class="fas fa-home"></i> Home</a>
+        <a href="#gallery"><i class="fas fa-image"></i> Gallery</a>
+        <a href="#camera"><i class="fas fa-camera"></i> Camera</a>
+        <a href="#profile"><i class="fas fa-user"></i> Profile</a>
+    </div>
+</div>

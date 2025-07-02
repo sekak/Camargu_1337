@@ -69,7 +69,7 @@ class Auth_controller
                         'username' => $user['username'],
                         'email' => $user['email'],
                     ];
-                    header("Location: /index.php");
+                    header("Location: /view/home.php?page=1");
                 } else {
                     $_SESSION["errors"] = "please verify your email first.";
                 }

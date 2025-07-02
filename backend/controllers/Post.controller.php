@@ -1,24 +1,24 @@
-
-
 <?php
 
 require_once __DIR__ . '/../models/Post.model.php';
-require_once __DIR__ .'/../config/database.php';
+require_once __DIR__ . '/../config/database.php';
 
-class  Post_controller {
+class Post_controller
+{
 
     private $db;
     private $user;
     private $postModel;
 
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->db = (new Database())->getConnection();
         $this->postModel = new Post($this->db);
     }
 
-    public function createPost() {
-        session_start();
+    public function createPost()
+    {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return;
         }
@@ -42,26 +42,36 @@ class  Post_controller {
         $_SESSION['success'] = "Post created successfully!";
     }
 
-    public function index() {
-        session_start();
-        if(!isset($_SESSION['user_profile'])) {
+    public function index()
+    {
+        if (!isset($_SESSION['user_profile'])) {
             header('Location: /views/layout/login.php');
             return;
         }
-        return  $this->postModel->getAllPosts();
+
+        $page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
+        $limit = 5;
+        $offset = ($page - 1) * $limit;
+
+        $counts = $this->postModel->countAllPosts();
+        if ($counts === 0) {
+            return []; // No posts available
+        }
+        $total_pages = ceil($counts / $limit);
+        $_SESSION['total_pages'] = $total_pages;
+
+        return $this->postModel->getAllPosts($limit, $offset);
     }
 
-    public function ShowPost($post_id) {
-        session_start();
+    public function ShowPost($post_id)
+    {
         if (!isset($_SESSION['user_profile'])) {
-            echo "You must be logged in to view posts." . $_SESSION['user_profile']['username'] ?? '';
             header('Location: /views/layout/login.php');
             return;
         }
 
         $post = $this->postModel->getPostById($post_id);
         if (!$post) {
-            // $_SESSION['errors'] = "Post not found.";
             header('Location: /index.php');
             return;
         }

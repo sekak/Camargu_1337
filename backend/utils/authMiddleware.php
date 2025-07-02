@@ -1,5 +1,5 @@
 <?php 
-session_start();
+require_once __DIR__ . '/../config/session.php';
 
 function isAuthenticated(): bool {
     return isset($_SESSION['user_profile']);

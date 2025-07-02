@@ -5,7 +5,7 @@
   width: 100%;
   background: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(10px);
-  padding: 1rem 2rem;
+  padding: 26px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -16,7 +16,7 @@
 .navbar .logo {
   font-size: 1.5rem;
   font-weight: 600;
-  color: #007bff;
+  color: rgba(141, 141, 141, 0.86);
   text-transform: uppercase;
   letter-spacing: 1px;
   text-decoration: none;
@@ -24,7 +24,7 @@
 
 .navbar .logout-btn {
   padding: 0.5rem 1rem;
-  background: #007bff;
+  background: rgba(141, 141, 141, 0.86);
   color: white;
   border: none;
   border-radius: 5px;

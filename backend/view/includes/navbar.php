@@ -1,6 +1,4 @@
 <?php
-require_once __DIR__ . '/../../utils/protectPartialFiles.php';
-protectPartialFiles(realpath(__FILE__));
 $username = $_SESSION['user_profile']['username'] ?? 'Guest';
 ?>
 
@@ -12,7 +10,8 @@ $username = $_SESSION['user_profile']['username'] ?? 'Guest';
         width: 100%;
         background: rgba(255, 255, 255, 0.9);
         backdrop-filter: blur(10px);
-        padding: 26px;
+        height: 80px;
+        padding: 0px 20px;
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -23,15 +22,15 @@ $username = $_SESSION['user_profile']['username'] ?? 'Guest';
     .navbar .logo {
         font-size: 1.5rem;
         font-weight: 600;
-        color: rgba(141, 141, 141, 0.86);
         text-transform: uppercase;
         letter-spacing: 1px;
         text-decoration: none;
+        color: black;
     }
 
     .navbar .logout-btn {
         padding: 0.5rem 1rem;
-        background: rgba(141, 141, 141, 0.86);
+        background:rgba(141, 141, 141, 0.86);
         color: white;
         border: none;
         border-radius: 5px;
@@ -41,12 +40,22 @@ $username = $_SESSION['user_profile']['username'] ?? 'Guest';
     }
 
     .navbar .logout-btn:hover {
-        background: #278fff;
+        background: rgba(176, 176, 176, 0.86);
+    }
+
+    @media (max-width: 624px) {
+        .navbar {
+            padding: 0px 10px;
+        }
+
+        .navbar .logo {
+            font-size: 1rem;
+        }
     }
 </style>
 
 <nav class="navbar">
-    <a href="index.php" class="logo">Camargu</a>
+    <a href="/view/home.php" class="logo">Camargu</a>
     <h2></h2>
     <div class="nav-links">
         <?php if (isset($_SESSION["user_profile"]['username'])): ?>

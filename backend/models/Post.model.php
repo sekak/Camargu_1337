@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/../config/session.php';
 
 class Post
 {
@@ -17,9 +18,20 @@ class Post
         ]);
 
     }
-    public function getAllPosts()
+    public function getAllPosts($limit = 5, $offset = 0)
     {
-        $stmt = $this->db->query("SELECT posts.*, users.username, users.email FROM posts JOIN users ON posts.user_id = users.id ORDER BY created_at DESC");
+        $stmt = $this->db->prepare("
+            SELECT posts.*, users.username, users.email 
+            FROM posts 
+            JOIN users ON posts.user_id = users.id 
+            ORDER BY created_at DESC 
+            LIMIT :limit OFFSET :offset
+        ");
+
+        $stmt->bindValue(':limit', (int) $limit, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', (int) $offset, PDO::PARAM_INT);
+        $stmt->execute();
+
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
     public function getPostById($post_id)
@@ -27,6 +39,12 @@ class Post
         $stmt = $this->db->prepare("SELECT posts.*, users.username, users.email FROM posts JOIN users ON posts.user_id = users.id WHERE posts.id = ?");
         $stmt->execute([$post_id]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function countAllPosts()
+    {
+        $stmt = $this->db->query("SELECT COUNT(*) as total FROM posts");
+        return (int) $stmt->fetch(PDO::FETCH_ASSOC)['total'];
     }
 }
 

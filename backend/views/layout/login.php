@@ -62,7 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         .form-container h2 {
             text-align: center;
             margin-bottom: 1.8rem;
-            color: #007bff; /* Sea green inspired by wetlands */
+            color: rgba(141, 141, 141, 0.86); /* Sea green inspired by wetlands */
             font-size: 1.8rem;
             font-weight: 600;
             text-transform: uppercase;
@@ -85,8 +85,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         input[type="email"]:focus,
         input[type="password"]:focus {
             outline: none;
-            border-color: #FF69B4; /* Hot pink for focus, flamingo-inspired */
-            box-shadow: 0 0 8px rgba(255, 105, 180, 0.4);
+            border-color: #007bb0; /* Hot pink for focus, flamingo-inspired */
+            box-shadow: 0 0 8px rgba(141, 141, 141, 0.86);
         }
 
         input::placeholder {
@@ -98,23 +98,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         button[type="submit"] {
             width: 100%;
             padding: 1rem;
-            background: #007bff; /* Sea green */
+            background: rgba(141, 141, 141, 0.86); /* Sea green */
             color: white;
             border: none;
             border-radius: 8px;
             font-size: 1.1rem;
             font-weight: 600;
             cursor: pointer;
-            transition: background 0.3s, transform 0.2s;
         }
 
         button[type="submit"]:hover {
-            background: #228B22; /* Forest green */
-            transform: translateY(-2px);
-        }
-
-        button[type="submit"]:active {
-            transform: translateY(0);
+            background: rgba(176, 176, 176, 0.86); /* Forest green */
         }
 
         /* Login link styling */
@@ -124,7 +118,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         .register-link a {
-            color: #FF69B4; /* Flamingo pink */
+            color: #007bb0; /* Flamingo pink */
             text-decoration: none;
             font-size: 0.95rem;
             font-weight: 600;
@@ -132,13 +126,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         .register-link a:hover {
-            color: #C71585; /* Darker pink */
+            color: #007bb0; /* Darker pink */
             text-decoration: underline;
         }
 
         /* Error message styling */
         .error {
-            color: #FF69B4;
+            color: #007bb0;
             font-size: 0.9rem;
             text-align: center;
             margin-bottom: 1rem;

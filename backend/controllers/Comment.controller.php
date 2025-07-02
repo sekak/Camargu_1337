@@ -16,7 +16,11 @@ class Comment_controller {
         return $this->commentModel->get_comments($postId);
     }
 
-    public function addComment($postId, $userId, $comment) {
+    public function addComment($postId, $comment) {
+        $userId = $_SESSION['user_profile']['id'] ?? null;
+        if (!$userId || !$postId || empty($comment)) {
+            return false; // Invalid input
+        }
         return $this->commentModel->add_comment($postId, $userId, $comment);
     }
 }
