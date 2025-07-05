@@ -1,8 +1,8 @@
 <?php
-include_once __DIR__ . "../../controllers/Post.controller.php" ;
-
-$postController = new Post_controller();
-$posts = $postController->index();
+// include_once __DIR__ . "../controllers/Post.controller.php" ;
+include_once __DIR__ . "../config/setup.php";
+// $postController = new Post_controller();
+// $posts = $postController->index();
 
 
 ?>
@@ -121,6 +121,16 @@ $posts = $postController->index();
             font-size: 14px;
             color: #666;
         }
+
+        .btn-create{
+            color: black;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-decoration: none;
+            border: 1px solid gray;
+            padding: 8px;
+            margin-top:10px;
+        }
     </style>
 </head>
 
@@ -140,7 +150,10 @@ $posts = $postController->index();
         <div class="main-content">
             <div class="posts-container">
                 <?php if (empty($posts)): ?>
-                    <p>No posts available.</p>
+                    <div style="display:flex;flex-direction:column;align-items:center;">
+                        <p>No posts available.</p>
+                        <a href='/view/gallery.php' class='btn-create'>Create one</a>
+                    </div>
                 <?php else: ?>
                     <?php foreach ($posts as $post): ?>
                         <!-- Post -->
@@ -167,11 +180,11 @@ $posts = $postController->index();
                             </div>
                         </div>
                     <?php endforeach; ?>
+                    
+                </div>
+                <!-- Pagination (Static) -->
+                <?php include_once __DIR__ ."/includes/pagination.php" ?>
                 <?php endif; ?>
-
-            </div>
-            <!-- Pagination (Static) -->
-            <?php include_once __DIR__ ."/includes/pagination.php" ?>
             </div>
     </main>
 

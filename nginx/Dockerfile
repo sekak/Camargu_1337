@@ -16,9 +16,6 @@ RUN apt-get update && apt-get install -y \
     php-fpm \
     && apt-get clean
 
-# Install Composer
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-
 # Set working directory
 WORKDIR /var/www/html
 
@@ -26,7 +23,6 @@ WORKDIR /var/www/html
 COPY ./backend /var/www/html
 
 # Install PHPMailer with Composer
-RUN composer require phpmailer/phpmailer
 
 # Copy nginx config
 COPY ../nginx/nginx.conf /etc/nginx/nginx.conf

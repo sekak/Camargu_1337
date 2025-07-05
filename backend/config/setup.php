@@ -1,5 +1,6 @@
 <?php
-require_once './config/database.php';
+
+include_once(__DIR__ . '/database.php');
 
 $db = (new Database())->getConnection();
 
@@ -30,6 +31,7 @@ CREATE TABLE IF NOT EXISTS posts (
 )";
 $db->exec($postQuery);
 
+
 $commentQuery = "
 CREATE TABLE IF NOT EXISTS comments (
   id INT AUTO_INCREMENT PRIMARY KEY,
@@ -42,6 +44,7 @@ CREATE TABLE IF NOT EXISTS comments (
 )";
 
 $db->exec($commentQuery);
+
 
 // Create likes table
 $likeQuery = "

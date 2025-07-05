@@ -16,15 +16,18 @@ volumes:
 services:
   mailhog:
       image: mailhog/mailhog
+      container_name: mailhog
       ports:
         - "8025:8025"  # Web UI
         - "1025:1025"  # SMTP server
       networks:
         - net
+        
   web:
     build:
       context: .             # use project root, not ./nginx
       dockerfile: nginx/Dockerfile
+    container_name: web
     ports:
       - "8000:80"
     depends_on:
@@ -43,6 +46,7 @@ services:
     build: 
       context: .
       dockerfile: mariadb/Dockerfile
+    container_name: mariadb-1
     ports:
       - "3306:3306"
     networks:
@@ -54,6 +58,7 @@ services:
 
   adminer:
     image: adminer
+    container_name: mariadb
     restart: always
     ports:
       - 8080:8080

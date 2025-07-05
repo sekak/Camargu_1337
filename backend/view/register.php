@@ -1,8 +1,8 @@
 <?php
-require_once '../../utils/authMiddleware.php';
-require_once '../../controllers/Auth.controller.php';
+// require_once '../../utils/authMiddleware.php';
+include_once(__DIR__ . '/../controllers/Auth.controller.php');
 
-redirectIfAuthenticated();
+// redirectIfAuthenticated();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $controller = new Auth_controller();

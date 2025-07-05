@@ -8,7 +8,6 @@ class Auth_controller
 {
     public function register()
     {
-
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return;
         }

@@ -57,7 +57,7 @@ if ($userModel->verifyToken($token)) {
         <h2>Account Verification</h2>
         <p class="message"><?php echo $message; ?></p>
         <?php if ($success): ?>
-            <a href="/views/layout/login.php" style="color: #155724; font-weight: bold;">Go to login</a>
+            <a href="/view/login.php" style="color: #155724; font-weight: bold;">Go to login</a>
             <?php endif; ?>
     </div>
 </body>
