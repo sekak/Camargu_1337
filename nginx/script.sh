@@ -23,6 +23,7 @@ chmod 666 /run/php/php8.2-fpm.sock
 
 composer install 
 
+mkdir -p /var/www/html/public/users_pictures
 chmod -R 775 /var/www/html/public/users_pictures
 chown -R www-data:www-data /var/www/html/public/users_pictures
 
