@@ -1,8 +1,9 @@
 <?php
-// require_once '../../utils/authMiddleware.php';
-include_once(__DIR__ . '/../controllers/Auth.controller.php');
+require_once __DIR__ ."/../utils/authMiddleware.php";
+include_once __DIR__ ."/../controllers/Auth.controller.php";
+include_once __DIR__ ."/../config/setup.php";
 
-// redirectIfAuthenticated();
+redirectIfAuthenticated();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $controller = new Auth_controller();
@@ -227,7 +228,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <button type="submit">Register</button>
             </form>
             <div class="login-link">
-                <a href="login.php">Already have an account? Log in here</a>
+                <a href="/view/login.php">Already have an account? Log in here</a>
             </div>
         <?php endif; ?>
 

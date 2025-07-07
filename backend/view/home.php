@@ -1,10 +1,12 @@
 <?php
-// include_once __DIR__ . "../controllers/Post.controller.php" ;
-include_once __DIR__ . "../config/setup.php";
-// $postController = new Post_controller();
-// $posts = $postController->index();
+include_once __DIR__ . "/../controllers/Post.controller.php";
+include_once __DIR__ . "/../config/setup.php";
+require_once __DIR__ .'/../utils/authMiddleware.php';
 
+redirectIfNotAuthenticated();
 
+$postController = new Post_controller();
+$posts = $postController->index();
 ?>
 
 
@@ -44,7 +46,6 @@ include_once __DIR__ . "../config/setup.php";
 
         .main-content {
             flex: 1;
-            padding: 20px;
             margin-top: 80px;
             display: flex;
             flex-direction: column;
@@ -65,10 +66,11 @@ include_once __DIR__ . "../config/setup.php";
         }
 
         .posts-container {
+            padding: 20px;
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 20px;
+            min-height: calc(100vh - 240px);
         }
 
         .post-container {
@@ -80,6 +82,7 @@ include_once __DIR__ . "../config/setup.php";
             overflow: hidden;
             transition: transform 0.3s ease;
             padding: 10px;
+            height: max-content;
         }
 
         .post-container .post-header {
@@ -101,13 +104,6 @@ include_once __DIR__ . "../config/setup.php";
             margin: 0;
         }
 
-        .post-container .post-header img {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            margin-right: 10px;
-        }
-
         .post-container .post-content img {
             width: 100%;
             max-height: 200px;
@@ -122,14 +118,14 @@ include_once __DIR__ . "../config/setup.php";
             color: #666;
         }
 
-        .btn-create{
+        .btn-create {
             color: black;
             text-transform: uppercase;
             letter-spacing: 1px;
             text-decoration: none;
             border: 1px solid gray;
             padding: 8px;
-            margin-top:10px;
+            margin-top: 10px;
         }
     </style>
 </head>
@@ -137,13 +133,13 @@ include_once __DIR__ . "../config/setup.php";
 <body>
 
     <!-- Navbar -->
-    <?php include_once __DIR__ ."/includes/navbar.php" ?>
+    <?php include_once __DIR__ . "/includes/navbar.php" ?>
 
     <!-- Page Layout -->
     <main class="home">
         <!-- Sidebar -->
         <div class="sidebar_home">
-        <?php include_once __DIR__ ."/includes/sidebar.php" ?>
+            <?php include_once __DIR__ . "/includes/sidebar.php" ?>
         </div>
 
         <!-- Main Content -->
@@ -160,7 +156,6 @@ include_once __DIR__ . "../config/setup.php";
                         <div class="post-container">
                             <!-- Post Header -->
                             <div class="post-header">
-                                <img src="https://picsum.photos/600/400?random=3" alt="Avatar" class="avatar" />
                                 <div class="user-info">
                                     <p class="username"><?php echo htmlspecialchars($post['username']); ?></p>
                                     <p class="email"><?php echo htmlspecialchars($post['email']); ?></p>
@@ -170,7 +165,7 @@ include_once __DIR__ . "../config/setup.php";
                             <!-- Post Image -->
                             <div class="post-content">
                                 <a href="/view/post.php?post_id=<?php echo $post['id']; ?>">
-                                    <img src="https://picsum.photos/600/400?random=3" alt="Post Image" />
+                                    <img src="<?php echo htmlspecialchars($post['image_url']); ?>" alt="Post Image" />
                                 </a>
                             </div>
 
@@ -180,16 +175,15 @@ include_once __DIR__ . "../config/setup.php";
                             </div>
                         </div>
                     <?php endforeach; ?>
-                    
-                </div>
-                <!-- Pagination (Static) -->
-                <?php include_once __DIR__ ."/includes/pagination.php" ?>
+
+                    <!-- Pagination (Static) -->
                 <?php endif; ?>
             </div>
+            <?php include_once __DIR__ . "/includes/pagination.php" ?>
+            <!-- Footer -->
+            <?php include_once __DIR__ . "/includes/footer.php" ?>
+        </div>
     </main>
-
-    <!-- Footer -->
-    <footer style="text-align:center; padding:1rem; background:#eee;">Footer</footer>
 
 </body>
 

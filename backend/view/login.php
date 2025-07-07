@@ -1,9 +1,9 @@
 <?php
-// require_once '../../utils/authMiddleware.php';
-require_once '../controllers/Auth.controller.php';
+require_once __DIR__ .'/../utils/authMiddleware.php';
+require_once __DIR__ .'/../controllers/Auth.controller.php';
 include_once __DIR__ ."/../config/setup.php";
 
-// redirectIfAuthenticated();
+redirectIfAuthenticated();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $controller = new Auth_controller();
@@ -115,6 +115,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         /* Login link styling */
         .register-link {
+            display: flex;
+            flex-direction: column;
             text-align: center;
             margin-top: 1rem;
         }
@@ -193,6 +195,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </form>
         <div class="register-link">
             <a href="register.php">Need an account? Register here</a>
+            <a href="forgot_password.php" style="margin-left: 10px;">Forgot Password?</a>
         </div>
     </div>
 </body>

@@ -69,10 +69,10 @@
         <div class="main-content">
             home content here
         </div>
+        <footer style="text-align:center; padding:1rem; background:#eee;">Footer</footer>
     </main>
 
     <!-- Footer -->
-    <footer style="text-align:center; padding:1rem; background:#eee;">Footer</footer>
 
 </body>
 

@@ -87,9 +87,6 @@
     <a href="/view/home.php" class="<?php echo basename($_SERVER['PHP_SELF']) == 'home.php' ? 'active' : ''; ?>">
       <i class="fas fa-home"></i> <span>Home</span></a>
     <a href="/view/gallery.php" class="<?php echo basename($_SERVER['PHP_SELF']) == 'gallery.php' ? 'active' : ''; ?>">
-    <i class="fas fa-image"></i><span>Gallery</span>
-    </a>
-    <a href="/view/camera.php" class="<?php echo basename($_SERVER['PHP_SELF']) == 'camera.php' ? 'active' : ''; ?>">
     <i class="fas fa-camera"></i><span>Camera</span>
     </a>
     <a href="/view/profile.php" class="<?php echo basename($_SERVER['PHP_SELF']) == 'profile.php' ? 'active' : ''; ?>">

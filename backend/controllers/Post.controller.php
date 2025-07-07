@@ -17,28 +17,20 @@ class Post_controller
         $this->postModel = new Post($this->db);
     }
 
-    public function createPost()
+    public function createPost($image_url)
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return;
         }
-
-        $title = $_POST['title'] ?? '';
-        $body = $_POST['body'] ?? '';
-        $user_id = $_SESSION['user_id'] ?? null;
-
-        if (empty($title) || empty($body)) {
-            $_SESSION['errors'] = "Title and body are required.";
-            return;
-        }
+        $user_id = $_SESSION['user_profile']['id'] ?? null;
 
         if (!$user_id) {
             $_SESSION['errors'] = "You must be logged in to create a post.";
-            header('Location: /views/layout/login.php');
+            header('Location: /view/login/login.php');
             return;
         }
 
-        $this->postModel->create($title, $body, $user_id);
+        $this->postModel->create($user_id, $image_url);
         $_SESSION['success'] = "Post created successfully!";
     }
 
@@ -77,4 +69,46 @@ class Post_controller
         }
         return $post;
     }
+
+    public function getPostsByUserId()
+    {
+        if (!isset($_SESSION['user_profile'])) {
+            header('Location: /views/layout/login.php');
+            return;
+        }
+
+        $user_id = $_SESSION['user_profile']['id'];
+        return $this->postModel->getPostsByUserId($user_id);
+    }
+
+    public function deletePost($post_id)
+    {
+        if (!isset($_SESSION['user_profile'])) {
+            header('Location: /view/login.php');
+            exit;
+        }
+
+        $user_id = $_SESSION['user_profile']['id'];
+        $post = $this->postModel->getPostById($post_id);
+
+        if (!$post || $post['user_id'] !== $user_id) {
+            $_SESSION['errors'] = "You do not have permission to delete this post.";
+            return;
+        }
+
+        // Delete comments
+        $stmtComments = $this->db->prepare("DELETE FROM comments WHERE post_id = ?");
+        $stmtComments->execute([$post_id]);
+
+        // Delete likes
+        $stmtLikes = $this->db->prepare("DELETE FROM likes WHERE post_id = ?");
+        $stmtLikes->execute([$post_id]);
+
+        // Then delete the post
+        $stmtPost = $this->db->prepare("DELETE FROM posts WHERE id = ?");
+        $stmtPost->execute([$post_id]);
+
+        $_SESSION['success'] = "Post deleted successfully!";
+    }
+
 }

@@ -1,3 +1,14 @@
+<?php
+include_once __DIR__ . "/../controllers/Post.controller.php";
+require_once __DIR__ .'/../utils/authMiddleware.php';
+
+redirectIfNotAuthenticated();
+
+$postController = new Post_controller();
+$posts = $postController->getPostsByUserId();
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -31,20 +42,18 @@
 
         .main-content {
             flex: 1;
-            padding: 20px;
             margin-top: 80px;
             width: calc(100% - 250px);
         }
 
         .main-content h1 {
             font-size: 2rem;
-            margin-bottom: 20px;
-            padding: 0px 20px;
         }
 
         .gallery-container {
             display: flex;
             gap: 10px;
+            padding: 20px;
         }
 
         .gallery {
@@ -52,7 +61,6 @@
             width: 100%;
             display: flex;
             flex-direction: column;
-            gap: 10px;
             padding: 20px;
             overflow: hidden;
         }
@@ -87,26 +95,25 @@
 
         .img-wrapper {
             position: relative;
-            width: 80%;
-            height: 450px;
+            width: 100%;
+            max-width: 500px;
+            aspect-ratio: 1 / 1;
+            /* This makes it always a square */
             border: 1px solid #ccc;
             border-radius: 20px;
+            overflow: hidden;
         }
 
+        .img-wrapper img,
+        .img-wrapper video,
         .img-wrapper .superpose {
-            position: absolute;
-            top: 0;
-            left: 0;
-            z-index: 1;
-            pointer-events: none;
-            display: 'none';
-        }
-
-        .img-wrapper img {
             width: 100%;
             height: 100%;
             object-fit: cover;
             border-radius: 20px;
+            position: absolute;
+            top: 0;
+            left: 0;
         }
 
         .img-btn {
@@ -184,15 +191,61 @@
         }
 
         @media (max-width: 920px) {
+
             .sidebar_home {
                 width: 150px;
             }
+
+            .main-content {
+                width: calc(100% - 150px);
+            }
+
+            .gallery-container {
+                flex-direction: column;
+            }
+
+            .thumbnail {
+                height: auto;
+            }
+
+            .img-container {
+                flex-direction: column;
+            }
+
+            .img-btn {
+                width: 100%;
+            }
+
         }
 
         @media (max-width: 624px) {
             .sidebar_home {
                 width: 50px;
             }
+        }
+
+        .items-thumbnail {
+            position: relative;
+            display: inline-block;
+            margin: 5px;
+        }
+
+        .items-thumbnail img {
+            width: 100%;
+            height: 100%;
+            border-radius: 5px;
+        }
+
+        .items-thumbnail .item-btn-fas {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            color: red;
+            cursor: pointer;
+            font-size: 1.2rem;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            padding: 2px 5px;
         }
     </style>
 </head>
@@ -211,14 +264,16 @@
 
         <!-- Main Content -->
         <div class="main-content">
-            <h1>Create Your Image</h1>
             <div class="gallery-container">
                 <div class="gallery">
+                    <h1>Create Your Image</h1>
                     <div class="img-container">
                         <div class="img-wrapper">
                             <img id="previewImage" src="" alt="Image Preview" class="preview-image" />
-                            <video id="captureImage" autoplay class="video" playsinline></video>
+                            <video id="captureImage" autoplay playsinline class="video"></video>
+                            <img id="superpose-layer" class="superpose" style="display: none;" />
                         </div>
+
                         <div class="img-btn">
                             <button id="capture-btn">Capture</button>
                             <button id="start-camera-btn">Start Camera</button>
@@ -238,7 +293,6 @@
                             <img src="/public/img7.png" alt="Superposed Image 1" id="ticket" />
                             <img src="/public/img8.png" alt="Superposed Image 1" id="ticket" />
                             <img src="/public/img9.png" alt="Superposed Image 1" id="ticket" />
-                            <img src="/public/img10.png" alt="Superposed Image 1" id="ticket" />
                             <img src="/public/img11.png" alt="Superposed Image 1" id="ticket" />
                             <img src="/public/img12.png" alt="Superposed Image 1" id="ticket" />
                             <img src="/public/img13.png" alt="Superposed Image 1" id="ticket" />
@@ -253,17 +307,24 @@
                 <div class="thumbnail">
                     <h2>Previous Creations</h2>
                     <div class="thubmnail-images">
-                        <img src="https://picsum.photos/600/400?random=3" alt="Thumbnail 1" />
-                        <img src="https://picsum.photos/600/400?random=3" alt="Thumbnail 1" />
-                        <img src="https://picsum.photos/600/400?random=3" alt="Thumbnail 1" />
+                        <?php if (empty($posts)): ?>
+                            <p>No previous creations available.</p>
+                        <?php else: ?>
+                            <?php foreach ($posts as $post): ?>
+                                <div class="items-thumbnail">
+                                    <img src="<?php echo htmlspecialchars($post['image_url']); ?>" alt="Thumbnail Image" />
+                                    <i class="item-btn-fas fas fa-times close-btn"
+                                        onclick="handleClickDelete(<?php echo $post['id']; ?>)" title="Remove"></i>
+                                </div>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
+            <!-- Footer -->
+            <?php include_once __DIR__ . "/includes/footer.php" ?>
         </div>
     </main>
-
-    <!-- Footer -->
-    <footer style="text-align:center; padding:1rem; background:#eee;">Footer</footer>
 
 
     <script>
@@ -310,26 +371,43 @@
             }
 
             function generateFinalImage(baseElement) {
-                console.log("--->",baseElement);
+                let originalWidth, originalHeight;
+
+                if (baseElement.tagName === 'VIDEO') {
+                    originalWidth = baseElement.videoWidth;
+                    originalHeight = baseElement.videoHeight;
+                } else if (baseElement.tagName === 'IMG') {
+                    originalWidth = baseElement.naturalWidth;
+                    originalHeight = baseElement.naturalHeight;
+                } else {
+                    return;
+                }
+
+                const size = Math.min(originalWidth, originalHeight);
+
                 const canvas = document.createElement('canvas');
-                canvas.width = baseElement.width || baseElement.videoWidth;
-                canvas.height = baseElement.height || baseElement.videoHeight;
+                canvas.width = size;
+                canvas.height = size;
 
                 const ctx = canvas.getContext('2d');
 
-                // Dessiner base (image ou vidéo)
-                ctx.drawImage(baseElement, 0, 0, canvas.width, canvas.height);
+                // Calculate crop center
+                const sx = (originalWidth - size) / 2;
+                const sy = (originalHeight - size) / 2;
 
-                // Superpose images
+                ctx.drawImage(baseElement, sx, sy, size, size, 0, 0, size, size);
+
+                // Draw superposed images
                 isSuperposed.forEach(id => {
                     const imgEl = document.getElementById(id);
                     if (imgEl) {
-                        ctx.drawImage(imgEl, 0, 0, canvas.width, canvas.height);
+                        ctx.drawImage(imgEl, 0, 0, size, size);
                     }
                 });
 
                 return canvas.toDataURL('image/jpeg');
             }
+
 
 
             superposeImages.forEach(superpose => {
@@ -357,7 +435,7 @@
 
             uploadBtn.addEventListener('change', (e) => {
                 if (e.target.files.length === 0 || !previewImage) return;
-                isUploaded = true;  
+                isUploaded = true;
                 if (!cancelBtn) {
                     cancelBtn = document.createElement('button');
                     cancelBtn.textContent = 'Cancel Upload';
@@ -432,7 +510,6 @@
                         }
                     })
                     .catch((error) => {
-                        console.error('Error accessing webcam:', error);
                     });
             });
 
@@ -458,7 +535,7 @@
                 saveBtn.onclick = () => {
                     const imgID = Math.floor(Math.random() * 1000000);
 
-                    fetch('/controllers/test.php', {
+                    fetch('/actions/saveImage.actions.php', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/x-www-form-urlencoded'
@@ -467,41 +544,54 @@
                     })
                         .then(response => response.text())
                         .then(text => {
-                            console.log('Raw response:', text);
+                            if (text.includes('success')) {
+                                alert('Image saved successfully!');
+                                location.reload(); // Reload the page to reflect changes
+                            } else {
+                                alert('Failed to save image. Please try again.');
+                            }
+                            removeSaveBtn();
+                            resetSuperposedImages();
+                            previewImage.src = '';
+                            previewImage.style.display = 'none';
+                            video.style.display = 'none';
+                            startCameraBtn.style.display = 'inline-block';
+                            avatarLabel.style.display = '';
+                            superposeImageItem.style.pointerEvents = 'none';
+                            superposeImg.style.cursor = 'not-allowed';
+                            stopCamera();
+                            isSuperposed = [];
+                            isUploaded = false;
+                            if (cancelBtn) {
+                                cancelBtn.remove();
+                                cancelBtn = null;
+                            }
                         })
                         .catch(error => {
-                            console.error('Error:', error);
                         });
                 };
             });
 
         });
 
-
-
+        function handleClickDelete(postId) {
+            if (confirm("Are you sure you want to delete this post?")) {
+                fetch(`/actions/deletePost.actions.php?id=${postId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: `id=${postId}`
+                })
+                    .then(response => response.text())
+                    .then(data => {
+                        location.reload(); // Reload the page to reflect changes
+                    })
+                    .catch(error => {
+                    });
+            }
+        }
     </script>
 </body>
 
 </html>
-
-
-<!-- const canvas = document.createElement('canvas');
-                const ctx = canvas.getContext('2d');
-                const img = new Image();
-                img.src = imgURL;
-                img.onload = () => {
-                    canvas.width = img.width;
-                    canvas.height = img.height;
-                    ctx.drawImage(img, 0, 0, img.width, img.height);
-                    if (isSuperposed.length > 0) {
-                        isSuperposed.forEach(id => {
-                            const superposeImg = document.getElementById(id);
-                            if (superposeImg) {
-                                ctx.globalAlpha = 0.3; // Set transparency for superposed images
-                                ctx.drawImage(superposeImg, 0, 0, img.width, img.height);
-                            }
-                        });
-                    }
-
-                    previewImage.src = canvas.toDataURL('image/png');
-                };   -->

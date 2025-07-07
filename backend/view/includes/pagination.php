@@ -54,7 +54,7 @@ $total_pages = $_SESSION['total_pages'];
     <?php
     // Example pagination buttons
     for ($i = 1; $i <= $total_pages; $i++) {
-        echo "<button class='page-button" . ($i === (int) $_GET['page'] ? " active" : "") . "'><a href='/view/home.php?page=$i'>$i</a></button>";
+        echo "<a href='/view/home.php?page=$i'><button class='page-button" . ($i === (int) $_GET['page'] ? " active" : "") . "'>$i</button></a>";
     }
     ?>
     <a href="/view/home.php?page=<?php echo $_GET['page'] + 1; ?>">

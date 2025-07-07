@@ -1,6 +1,3 @@
-<?php
-$username = $_SESSION['user_profile']['username'] ?? 'Guest';
-?>
 
 <style>
     .navbar {
@@ -43,6 +40,17 @@ $username = $_SESSION['user_profile']['username'] ?? 'Guest';
         background: rgba(176, 176, 176, 0.86);
     }
 
+    .navbar .nav-links form span{
+        margin-right: 10px;
+        font-size: 1rem;
+        color: black;
+    }
+
+    .navbar .nav-links form{
+        display: flex !important;
+        align-items: center;
+    }
+
     @media (max-width: 624px) {
         .navbar {
             padding: 0px 10px;
@@ -56,11 +64,10 @@ $username = $_SESSION['user_profile']['username'] ?? 'Guest';
 
 <nav class="navbar">
     <a href="/view/home.php" class="logo">Camargu</a>
-    <h2></h2>
     <div class="nav-links">
         <?php if (isset($_SESSION["user_profile"]['username'])): ?>
-            <form action="/views/layout/logout.php" method="POST" style="display: inline;">
-                <span><?= $username ?></span>
+            <form action="/view/logout.php" method="POST" style="display: inline;">
+                <span><?php echo htmlspecialchars($_SESSION['user_profile']['username'] ) ?></span>
                 <button type="submit" class="logout-btn">Log Out</button>
             </form>
         <?php endif; ?>

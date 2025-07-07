@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../config/database.php';
-require_once __DIR__ . '/../models/User.php';
-require_once __DIR__ . '/../models/Mail.php';
+require_once __DIR__ . '/../models/User.model.php';
+require_once __DIR__ . '/../models/Mail.model.php';
 
 
 class Auth_controller
@@ -28,18 +28,31 @@ class Auth_controller
             return;
         }
 
-        $userExists = $userModel->findByEmail($email);
-        if ($userExists) {
+        $usernameExists = $userModel->findByUsername($username, true);
+        if($usernameExists) {
+            $_SESSION['errors'] = "Username already exists.";
+            return;
+        }
+        
+        $emailExists = $userModel->findByEmail($email, true);
+        if ($emailExists) {
             $_SESSION['errors'] = "Email already exists.";
             return;
         }
+
+        // add strong password validation, just more than 6 characters and at least one uppercase letter,
+        if (strlen($password) < 6 || !preg_match('/[A-Z]/', $password)) {
+            $_SESSION['errors'] = "Password must be at least 6 characters long and contain at least one uppercase letter.";
+            return;
+        }
+
         $hashed = password_hash($password, PASSWORD_BCRYPT);
         $token = bin2hex(random_bytes(32));
 
         $userModel->create($username, $email, $hashed, $token);
         $_SESSION['register_success'] = "✅ Please check your email to confirm your account.";
 
-        $mail = new Mail();
+        $mail = new Mail_model();
         $mail->sendVerificationEmail($email, $token, $username);
 
     }
@@ -67,6 +80,7 @@ class Auth_controller
                         'id' => $user['id'],
                         'username' => $user['username'],
                         'email' => $user['email'],
+                        'notify_comments' => $user['notify_comments'],
                     ];
                     header("Location: /view/home.php?page=1");
                 } else {

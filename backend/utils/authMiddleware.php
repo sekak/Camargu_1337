@@ -5,14 +5,14 @@ function isAuthenticated(): bool {
     return isset($_SESSION['user_profile']);
 }
 
-function redirectIfNotAuthenticated(string $redirectUrl = '/views/layout/login.php'): void {
+function redirectIfNotAuthenticated(string $redirectUrl = '/view/login.php'): void {
     if (!isAuthenticated()) {
-        header("Location: $redirectUrl");
+        header(header: "Location: $redirectUrl");
         exit;
     }
 }
 
-function redirectIfAuthenticated(string $redirectUrl = '/index.php'): void {
+function redirectIfAuthenticated(string $redirectUrl = '/view/home.php'): void {
     if (isAuthenticated()) {
         header("Location: $redirectUrl");
         exit;

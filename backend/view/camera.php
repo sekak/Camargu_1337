@@ -1,3 +1,9 @@
+<?php 
+require_once __DIR__ .'/../utils/authMiddleware.php';
+
+redirectIfNotAuthenticated();
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 

@@ -1,178 +1,250 @@
+<?php
+require_once __DIR__ .'/../utils/authMiddleware.php';
 
+redirectIfNotAuthenticated();
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+?>
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Profile</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            background-color: #f0f0f0;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>User Profile</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-        .main-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2vw;
-            box-sizing: border-box;
-            min-height: 100vh;
-        }
+    body {
+      font-family: 'Poppins', sans-serif;
+    }
 
-        .profile-wrapper {
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-            padding: 2rem;
-            width: 100%;
-        }
+    .home {
+      display: flex;
+      min-height: 100vh;
+    }
 
-        .profile-header {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
+    .sidebar_home {
+      width: 250px;
+      padding: 20px;
+    }
 
-        .profile-header h1 {
-            font-size: 2rem;
-            color: #333;
-            margin: 0 0 1rem;
-        }
+    .main-content {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
 
-        .profile-header p {
-            font-size: 1rem;
-            color: #666;
-            margin: 0.5rem 0;
-            line-height: 1.5;
-        }
+    .profile-container {
+      width: 100%;
+      background: #fff;
+      padding: 75px 20px;
+      margin: 50px 15px 150px 15px;
+    }
 
-        .profile-section {
-            margin-top: 2rem;
-            padding: 1.5rem;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
+    .profile-container h2 {
+      text-align: center;
+      margin-bottom: 25px;
+      font-weight: 600;
+      color: #333;
+    }
 
-        .profile-section h2 {
-            font-size: 1.5rem;
-            color: #333;
-            margin-bottom: 1rem;
-        }
+    .form-group {
+      margin-bottom: 18px;
+    }
 
-        .profile-section p {
-            font-size: 1rem;
-            color: #444;
-            margin: 0.5rem 0;
-            line-height: 1.6;
-        }
+    .form-group label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 500;
+      color: #555;
+    }
 
-        .profile-section button {
-            padding: 0.8rem 1.5rem;
-            background: #007bff;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 1rem;
-            transition: background 0.3s ease;
-            width: 100%;
-            max-width: 200px;
-            margin-top: 1rem;
-        }
+    .form-group input[type="text"],
+    .form-group input[type="email"],
+    .form-group input[type="password"] {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 14px;
+      transition: border 0.3s;
+    }
 
-        .profile-section button:hover {
-            background: #0056b3;
-        }
+    .form-group input:focus {
+      outline: none;
+      border-color: #ff7f7f;
+    }
 
-        .profile-section button:focus {
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(0,123,255,0.3);
-        }
+    .btn-save-change {
+      width: 100%;
+      padding: 12px;
+      background: #ff7f7f;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+      margin-top: 10px;
+      transition: background 0.3s;
+    }
 
-        /* Tablet and smaller */
-        @media (max-width: 768px) {
-            .main-content {
-                padding: 3vw;
-            }
+    .btn-save-change:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
 
-            .profile-wrapper {
-                padding: 1.5rem;
-            }
+    .btn-save-change:hover:not(:disabled) {
+      background: #ff5c5c;
+    }
 
-            .profile-header h1 {
-                font-size: 1.8rem;
-            }
+    @media (max-width: 920px) {
 
-            .profile-header p {
-                font-size: 0.9rem;
-            }
+      .sidebar_home {
+        width: 150px;
+      }
 
-            .profile-section h2 {
-                font-size: 1.3rem;
-            }
+      .main-content {
+        width: calc(100% - 150px);
+      }
+    }
 
-            .profile-section p {
-                font-size: 0.9rem;
-            }
-
-            .profile-section button {
-                padding: 0.6rem 1.2rem;
-                font-size: 0.9rem;
-            }
-        }
-
-        /* Mobile */
-        @media (max-width: 480px) {
-            .main-content {
-                padding: 4vw;
-            }
-
-            .profile-wrapper {
-                padding: 1rem;
-            }
-
-            .profile-header h1 {
-                font-size: 1.5rem;
-            }
-
-            .profile-header p {
-                font-size: 0.8rem;
-            }
-
-            .profile-section h2 {
-                font-size: 1.2rem;
-            }
-
-            .profile-section p {
-                font-size: 0.8rem;
-            }
-
-            .profile-section button {
-                padding: 0.5rem 1rem;
-                font-size: 0.8rem;
-                max-width: 150px;
-            }
-        }
-    </style>
+    @media (max-width: 624px) {
+      .sidebar_home {
+        width: 50px;
+      }
+    }
+  </style>
 </head>
-<body>
-    <div class="main-content">
-        <div class="profile-wrapper">
-            <div class="profile-header">
-                <h1>Profile</h1>
-                <p>Welcome to your profile page!</p>
-                <p>Here you can view and edit your profile information.</p>
 
-                <section class="profile-section">
-                    <h2>User Profile</h2>
-                    <p>Name: <?php echo htmlspecialchars($user['name']); ?></p>
-                    <p>Email: <?php echo htmlspecialchars($user['email']); ?></p>
-                    <p>Bio: <?php echo htmlspecialchars($user['bio']); ?></p>
-                    <button onclick="window.location.href='edit_profile.php'">Edit Profile</button>
-                </section>
-            </div>
-        </div>
+<body>
+
+  <?php include_once("./includes/navbar.php"); ?>
+
+  <main class="home">
+    <div class="sidebar_home">
+      <?php include_once("./includes/sidebar.php"); ?>
     </div>
+
+    <div class="main-content">
+      <div class="profile-container">
+        <h2>User Profile</h2>
+        <form id="profileForm">
+          <div class="form-group">
+            <label for="username">Name</label>
+            <input type="text" id="username" name="username" value="">
+          </div>
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" value="">
+          </div>
+          <div class="form-group">
+            <label for="password">New Password (leave empty if no change)</label>
+            <input type="password" id="password" name="password" placeholder="********">
+          </div>
+          <div class="form-group">
+            <label>
+              <input type="checkbox" id="notify_comments" name="notify_comments">
+              Enable notifications for new comments
+            </label>
+          </div>
+          <button class="btn-save-change" type="submit" id="saveBtn" disabled>Save Changes</button>
+        </form>
+      </div>
+      <!-- Footer -->
+      <?php include_once __DIR__ . "/includes/footer.php" ?>
+    </div>
+  </main>
+
+  <script>
+    const profileForm = document.getElementById('profileForm');
+    const username = document.getElementById('username');
+    const email = document.getElementById('email');
+    const password = document.getElementById('password');
+    const notify_comments = document.getElementById('notify_comments');
+    const saveBtn = document.getElementById('saveBtn');
+
+    const originalData = {
+      username: "<?php echo htmlspecialchars($_SESSION['user_profile']['username'] ?? '') ?>",
+      email: "<?php echo htmlspecialchars($_SESSION['user_profile']['email'] ?? '') ?>",
+      notify_comments: <?php echo htmlspecialchars($_SESSION['user_profile']['notify_comments']) ? 'true' : 'false'; ?>
+    };
+
+    window.addEventListener('DOMContentLoaded', () => {
+      username.value = originalData.username;
+      email.value = originalData.email;
+      notify_comments.checked = originalData.notify_comments;
+
+      username.addEventListener('input', detect_changes);
+      email.addEventListener('input', detect_changes);
+      password.addEventListener('input', detect_changes);
+      notify_comments.addEventListener('change', detect_changes);
+    });
+
+    function detect_changes() {
+      const isChanged =
+        username.value !== originalData.username ||
+        email.value !== originalData.email ||
+        notify_comments.checked !== originalData.notify_comments ||
+        password.value.length > 0;
+
+      saveBtn.disabled = !isChanged;
+    }
+
+    profileForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const formData = new FormData();
+      formData.append('username', username.value);
+      formData.append('email', email.value);
+      formData.append('password', password.value);
+      formData.append('notify_comments', notify_comments.checked ? 1 : 0);
+
+      const xhr = new XMLHttpRequest();
+      xhr.open('POST', '/actions/updateProfile.actions.php', true);
+
+      xhr.onload = function () {
+        if (xhr.status === 200) {
+          const response = JSON.parse(xhr.responseText);
+          if (response.success) {
+            alert("Profile updated successfully!");
+            // Update local original data
+            originalData.username = username.value;
+            originalData.email = email.value;
+            originalData.notify_comments = notify_comments.checked;
+
+            // Clear password field after successful update
+            password.value = '';
+            saveBtn.disabled = true;
+            location.reload();
+          } else {
+            alert("Update failed: " + (response.message || "Unknown error"));
+          }
+        } else {
+          alert("Request failed with status " + xhr.status);
+        }
+      };
+
+      xhr.onerror = function () {
+        alert("Request error occurred");
+      };
+
+      xhr.send(formData);
+    });
+  </script>
+
 </body>
+
 </html>

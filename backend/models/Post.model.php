@@ -8,14 +8,19 @@ class Post
     {
         $this->db = $db;
     }
-    public function create(string $title, string $body, int $user_id)
+    public function create($user_id, $image_url)
     {
-        $stmt = $this->db->prepare("INSERT INTO posts (title, body, user_id) VALUES VALUES (?, ?, ?)");
-        $stmt->execute([
-            $title,
-            $body,
-            $user_id
-        ]);
+
+        try {
+            $stmt = $this->db->prepare("INSERT INTO posts (user_id, image_url) VALUES (?, ?)");
+            $stmt->execute([
+                $user_id,
+                $image_url,
+            ]);
+            echo "Creating post...";
+        } catch (PDOException $e) {
+            echo "Error creating post: " . $e->getMessage();
+        }
 
     }
     public function getAllPosts($limit = 5, $offset = 0)
@@ -45,6 +50,13 @@ class Post
     {
         $stmt = $this->db->query("SELECT COUNT(*) as total FROM posts");
         return (int) $stmt->fetch(PDO::FETCH_ASSOC)['total'];
+    }
+
+    public function getPostsByUserId($user_id)
+    {
+        $stmt = $this->db->prepare("SELECT posts.*, users.username, users.email FROM posts JOIN users ON posts.user_id = users.id WHERE posts.user_id = ? ORDER BY posts.created_at DESC");
+        $stmt->execute([$user_id]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }
 

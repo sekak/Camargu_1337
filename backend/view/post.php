@@ -1,8 +1,11 @@
 <?php
 require_once __DIR__ . '/../config/session.php';
-include_once("../controllers/Comment.controller.php");
-include_once("../controllers/Post.controller.php");
-include_once("../controllers/Like.controller.php");
+include_once __DIR__ ."/../controllers/Comment.controller.php";
+include_once __DIR__ ."/../controllers/Post.controller.php";
+include_once __DIR__ ."/../controllers/Like.controller.php";
+require_once __DIR__ .'/../utils/authMiddleware.php';
+
+redirectIfNotAuthenticated();
 
 if (isset($_GET['post_id']) && is_numeric($_GET['post_id'])) {
     $postId = $_GET["post_id"];
@@ -22,7 +25,7 @@ $likeData = $likeController->index($postId);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['comment']) && !empty($_POST['comment'])) {
-        $commentController->addComment($postId, $_POST['comment']);
+        $commentController->addComment($postId, $_POST['comment']);        
         header("Location: /view/post.php?post_id=$postId");
         exit;
     }
@@ -127,13 +130,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             flex: 1;
             margin-right: 2rem;
             height: 100%;
+            background-color: gray;
         }
 
         .post-page .post-img img {
             width: 100%;
             height: 100%;
             border-radius: 10px;
-            object-fit: cover;
+            object-fit: contain;
         }
 
         .post-page .post-info {
@@ -172,12 +176,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             display: flex;
             align-items: center;
             gap: 1rem;
-        }
-
-        .post-info-header .avatar img {
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
         }
 
         .avatar .avatar-info {
@@ -308,6 +306,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         .post-form button:hover {
             background: rgba(176, 176, 176, 0.86);
         }
+
+        @media (max-width: 1024px) {
+            .post-page {
+                flex-direction: column;
+                height: auto;
+            }
+
+            .post-page .post-img {
+                margin-right: 0;
+                margin-bottom: 2rem;
+            }
+
+            .post-page .post-info {
+                width: 100%;
+            }
+        }
     </style>
 </head>
 
@@ -327,12 +341,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="main-content">
             <div class="post-page">
                 <div class="post-img">
-                    <img src="https://picsum.photos/600/400?random=3" alt="Post Image" />
+                    <img src="<?php echo htmlspecialchars($post['image_url']); ?>" alt="Post Image" />
                 </div>
                 <div class="post-info">
                     <div class="post-info-header">
                         <div class="avatar">
-                            <img src="https://picsum.photos/50/50?random=1" alt="User Avatar" />
                             <div class="avatar-info">
                                 <h3><?php echo htmlspecialchars($post['username']) ?></h3>
                                 <p>Posted on: <span>
@@ -386,7 +399,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </main>
 
     <!-- Footer -->
-    <footer style="text-align:center; padding:1rem; background:#eee;">Footer</footer>
+    <?php include_once __DIR__ ."/includes/footer.php" ?>
 
 </body>
 
