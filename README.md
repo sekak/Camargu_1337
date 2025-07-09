@@ -1,3 +1,7 @@
+![Screenshot from 2025-07-09 15-26-31](https://github.com/user-attachments/assets/f605661f-1953-49df-a704-d97f8b52e6fe)
+![Screenshot from 2025-07-09 15-25-26](https://github.com/user-attachments/assets/0cb28ede-75bb-4a12-a98d-15230e7b3018)
+![Screenshot from 2025-07-09 15-26-38](https://github.com/user-attachments/assets/39f41667-2044-4fe5-af94-27009af0b0ef)
+
 # Camargu - Social Photo Sharing Platform
 
 Camargu is a web-based social media platform where users can share photos, interact with posts through likes and comments, and discover content from other users. Built with PHP and MariaDB, containerized with Docker for easy deployment.
