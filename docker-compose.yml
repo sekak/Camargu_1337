@@ -4,13 +4,13 @@ networks:
     net:
       name: net
 
-volumes:
-  mariadb_data:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: ./backend/mariadb_data
+# volumes:
+#   mariadb_data:
+#     driver: local
+#     driver_opts:
+#       type: none
+#       o: bind
+#       device: ./backend/mariadb_data
     
 
 services:
@@ -51,8 +51,8 @@ services:
       - "3306:3306"
     networks:
       - net 
-    volumes:
-      - mariadb_data:/var/lib/mysql
+    # volumes:
+    #   - mariadb_data:/var/lib/mysql
     env_file:
       - .env_file
 

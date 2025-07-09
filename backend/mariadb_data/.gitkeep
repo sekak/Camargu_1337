@@ -1,3 +1,0 @@
-# This file ensures that the mariadb_data directory is tracked by Git
-# MariaDB data files will be stored in this directory when the container runs
-
